@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map,scan } from 'rxjs/operators';
 
 /*
 Objectives:
@@ -37,6 +37,15 @@ export class AppComponent  {
   actionType = Action;
   actions$ = new BehaviorSubject(Action.Reset);
 
-  state$: Observable<AppState> = of({...this.initialState});
+  // state$: Observable<AppState> = of({...this.initialState});
+  state$: Observable<AppState> = this.actions$.pipe(
+     scan((state: AppState, action: Action) => {
+      switch (action) {
+        case Action.Add:
+          return { ...state, count: state.count + 1 };
+      }
+      return state;
+    }, {...this.initialState}),
+  );
 
 }
